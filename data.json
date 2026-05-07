@@ -1,0 +1,302 @@
+{
+  "users": {
+    "427565058982412290": {
+      "username": "midnightcorners",
+      "currency": "silver",
+      "available_balance": 5547833,
+      "debts_owed": {
+        "1134606847769321643": {
+          "amount": 3500000,
+          "reason": "regear"
+        },
+        "1495904556671041707": {
+          "amount": 1000000,
+          "reason": "gay porn"
+        }
+      },
+      "last_updated": "2026-05-07T22:22:33.448140+00:00",
+      "transactions": [
+        {
+          "transaction_id": "tx_001",
+          "type": "admin_add_debt",
+          "amount": 1000000,
+          "reason": "new sword",
+          "timestamp": "2026-05-07T10:03:27.923186Z",
+          "creditor_id": "1134606847769321643",
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_002",
+          "type": "admin_add_debt",
+          "amount": 2500000,
+          "reason": "regear",
+          "timestamp": "2026-05-07T10:22:49.467675Z",
+          "creditor_id": "1134606847769321643",
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_003",
+          "type": "balance_credit",
+          "amount": 2400000,
+          "reason": "split",
+          "timestamp": "2026-05-07T21:30:32.585594+00:00",
+          "available_balance_after": 2400000,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_004",
+          "type": "debt_added",
+          "amount": 1000000,
+          "reason": "gay porn",
+          "timestamp": "2026-05-07T21:31:05.863794+00:00",
+          "creditor_id": "1495904556671041707",
+          "debt_total_after": 4500000,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_005",
+          "type": "split_credit",
+          "amount": 3147833,
+          "reason": "Finished split 6932f03d65",
+          "timestamp": "2026-05-07T22:22:23.511466+00:00",
+          "split_id": "6932f03d65",
+          "gross_value": 10100000,
+          "setup_fee": 252500,
+          "sale_tax_rate": 0.04,
+          "sale_tax": 404000,
+          "available_balance_after": 5547833,
+          "performed_by": "427565058982412290"
+        }
+      ]
+    },
+    "1134606847769321643": {
+      "username": "luastate",
+      "currency": "silver",
+      "available_balance": 3147833,
+      "debts_owed": {
+        "427565058982412290": {
+          "amount": 5000000,
+          "reason": "regear"
+        }
+      },
+      "last_updated": "2026-05-07T22:22:23.511493+00:00",
+      "transactions": [
+        {
+          "transaction_id": "tx_001",
+          "type": "admin_add_debt",
+          "amount": 5000000,
+          "reason": "regear",
+          "timestamp": "2026-05-07T10:22:20.694495Z",
+          "creditor_id": "427565058982412290",
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_002",
+          "type": "split_credit",
+          "amount": 3147833,
+          "reason": "Finished split 6932f03d65",
+          "timestamp": "2026-05-07T22:22:23.511493+00:00",
+          "split_id": "6932f03d65",
+          "gross_value": 10100000,
+          "setup_fee": 252500,
+          "sale_tax_rate": 0.04,
+          "sale_tax": 404000,
+          "available_balance_after": 3147833,
+          "performed_by": "427565058982412290"
+        }
+      ]
+    },
+    "1495904556671041707": {
+      "username": "Calm Before Chaos Bot",
+      "currency": "silver",
+      "available_balance": 3147833,
+      "debts_owed": {
+        "427565058982412290": {
+          "amount": 1400000,
+          "reason": "not gay porn"
+        }
+      },
+      "last_updated": "2026-05-07T22:22:23.511483+00:00",
+      "transactions": [
+        {
+          "transaction_id": "tx_001",
+          "type": "debt_added",
+          "amount": 1400000,
+          "reason": "not gay porn",
+          "timestamp": "2026-05-07T21:31:32.260112+00:00",
+          "creditor_id": "427565058982412290",
+          "debt_total_after": 1400000,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_002",
+          "type": "split_credit",
+          "amount": 3147833,
+          "reason": "Finished split 6932f03d65",
+          "timestamp": "2026-05-07T22:22:23.511483+00:00",
+          "split_id": "6932f03d65",
+          "gross_value": 10100000,
+          "setup_fee": 252500,
+          "sale_tax_rate": 0.04,
+          "sale_tax": 404000,
+          "available_balance_after": 3147833,
+          "performed_by": "427565058982412290"
+        }
+      ]
+    }
+  },
+  "scheduled_content": {
+    "7eaa2cc80a8e4dea8cddec54ce3c8ca4": {
+      "schedule_id": "7eaa2cc80a8e4dea8cddec54ce3c8ca4",
+      "content_type": "roads",
+      "scheduled_for": "2026-05-07T22:21:13.644199+00:00",
+      "gearsets": "rotcaller",
+      "guild_id": "1484466633497116672",
+      "channel_id": "1484466634302292031",
+      "role_ids": [
+        "1502057303699099748"
+      ],
+      "created_by": "427565058982412290",
+      "announcement_message_id": "1502057754377060412",
+      "started": true,
+      "current_team_message_id": "1502066031479226480",
+      "started_at": "2026-05-07T22:21:13.803849+00:00"
+    },
+    "7e51f7f87e69430e82c51c3200008929": {
+      "schedule_id": "7e51f7f87e69430e82c51c3200008929",
+      "content_type": "bz_roam",
+      "scheduled_for": "2026-05-07T22:26:46.133486+00:00",
+      "gearsets": "Rotcaller",
+      "guild_id": "1484466633497116672",
+      "channel_id": "1484466634302292031",
+      "role_ids": [
+        "1502057357272940706"
+      ],
+      "created_by": "427565058982412290",
+      "announcement_message_id": "1502059141642846339",
+      "started": true,
+      "current_team_message_id": "1502066051137933312",
+      "started_at": "2026-05-07T22:26:46.502972+00:00"
+    },
+    "cedfc9166e674f7c8a0037e1d1fbd751": {
+      "schedule_id": "cedfc9166e674f7c8a0037e1d1fbd751",
+      "content_type": "bz_roam",
+      "scheduled_for": "2026-05-07T21:57:14.249048+00:00",
+      "gearsets": "Rotcaller",
+      "guild_id": "1484466633497116672",
+      "channel_id": "1484466634302292031",
+      "role_ids": [
+        "1502057357272940706"
+      ],
+      "created_by": "427565058982412290",
+      "announcement_message_id": "1502059259544993912",
+      "started": true,
+      "current_team_message_id": "1502066054434783243",
+      "started_at": "2026-05-07T21:57:14.691758+00:00"
+    },
+    "c89d25cebd4b4076b7c63977ac98479c": {
+      "schedule_id": "c89d25cebd4b4076b7c63977ac98479c",
+      "content_type": "bz_roam",
+      "scheduled_for": "2026-05-07T22:09:33.365528+00:00",
+      "gearsets": "Rotcaller",
+      "guild_id": "1484466633497116672",
+      "channel_id": "1484466634302292031",
+      "role_ids": [
+        "1502057357272940706"
+      ],
+      "created_by": "427565058982412290",
+      "announcement_message_id": "1502066134332215428",
+      "current_team_message_id": "1502066143798755508",
+      "started": true,
+      "started_at": "2026-05-07T22:09:33.758211+00:00"
+    },
+    "82a52b2c0f0b4176afb85c0094d9b91e": {
+      "schedule_id": "82a52b2c0f0b4176afb85c0094d9b91e",
+      "content_type": "roads",
+      "scheduled_for": "2026-05-07T22:06:44.553209+00:00",
+      "gearsets": "Rotcaller",
+      "guild_id": "1484466633497116672",
+      "channel_id": "1484466634302292031",
+      "role_ids": [
+        "1502057303699099748"
+      ],
+      "created_by": "427565058982412290",
+      "announcement_message_id": "1502066684561854578",
+      "current_team_message_id": "1502066694632505385",
+      "started": true,
+      "started_at": "2026-05-07T22:06:44.794576+00:00"
+    },
+    "c48adcf749bf46979c7beefaac527962": {
+      "schedule_id": "c48adcf749bf46979c7beefaac527962",
+      "content_type": "bz_roam",
+      "scheduled_for": "2026-05-07T22:27:34.608983+00:00",
+      "gearsets": "Rotcaller",
+      "guild_id": "1484466633497116672",
+      "channel_id": "1484466634302292031",
+      "role_ids": [
+        "1502057357272940706"
+      ],
+      "created_by": "427565058982412290",
+      "announcement_message_id": "1502071927542513867",
+      "current_team_message_id": "1502071938598572032",
+      "role_caps": {
+        "tank": 2,
+        "dps": null,
+        "healer": 2
+      },
+      "started": true,
+      "started_at": "2026-05-07T22:27:36.232104+00:00"
+    },
+    "e73ed15019404cdc882f639d71b50090": {
+      "schedule_id": "e73ed15019404cdc882f639d71b50090",
+      "content_type": "bz_roam",
+      "scheduled_for": "2026-05-07T22:30:40.721337+00:00",
+      "gearsets": "Rotcaller",
+      "guild_id": "1484466633497116672",
+      "channel_id": "1484466634302292031",
+      "role_ids": [
+        "1502057357272940706"
+      ],
+      "created_by": "427565058982412290",
+      "announcement_message_id": "1502072708127527024",
+      "current_team_message_id": "1502072716138905772",
+      "role_caps": {
+        "tank": 2,
+        "dps": null,
+        "healer": 2
+      },
+      "started": true,
+      "started_at": "2026-05-07T22:30:41.284863+00:00"
+    }
+  },
+  "splits": {
+    "6932f03d65": {
+      "split_id": "6932f03d65",
+      "gear_value": 8400000,
+      "bags_value": 1700000,
+      "gross_value": 10100000,
+      "setup_fee": 252500,
+      "has_premium": true,
+      "sale_tax_rate": 0.04,
+      "sale_tax": 404000,
+      "net_value": 9443500,
+      "participant_ids": [
+        "427565058982412290",
+        "1495904556671041707",
+        "1134606847769321643"
+      ],
+      "split_amount": 3147833,
+      "remainder": 1,
+      "performed_by": "427565058982412290",
+      "created_at": "2026-05-07T22:22:23.511370+00:00",
+      "undone": false
+    }
+  },
+  "content_role_caps": {
+    "bz_roam": {
+      "tank": 2,
+      "dps": null,
+      "healer": 2
+    }
+  }
+}
