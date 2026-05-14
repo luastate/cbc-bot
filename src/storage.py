@@ -5,7 +5,7 @@ import os
 from copy import deepcopy
 from typing import Any
 
-from src.config import DATA_FILE, DEFAULT_CURRENCY
+from src.config import DATA_FILE, DEFAULT_ADMIN_ROLE_IDS, DEFAULT_CURRENCY
 from src.utils import to_iso8601, utcnow
 
 
@@ -20,6 +20,10 @@ class DataStore:
             "scheduled_content": {},
             "splits": {},
             "content_role_caps": {},
+            "content_role_ids": {},
+            "content_channel_id": None,
+            "admin_role_ids": DEFAULT_ADMIN_ROLE_IDS,
+            "pinned_channels": {},
         }
 
     def _default_user(self, username: str = "Unknown") -> dict[str, Any]:
@@ -58,6 +62,27 @@ class DataStore:
             data["content_role_caps"] = {}
             changed = True
 
+        if "content_role_ids" not in data:
+            data["content_role_ids"] = {}
+            changed = True
+
+        if "content_channel_id" not in data:
+            data["content_channel_id"] = None
+            changed = True
+
+        # Migrate from single admin_role_id to admin_role_ids list
+        if "admin_role_id" in data and "admin_role_ids" not in data:
+            old_role_id = data.pop("admin_role_id")
+            data["admin_role_ids"] = [old_role_id] if old_role_id else DEFAULT_ADMIN_ROLE_IDS
+            changed = True
+        elif "admin_role_ids" not in data:
+            data["admin_role_ids"] = DEFAULT_ADMIN_ROLE_IDS
+            changed = True
+
+        if "pinned_channels" not in data:
+            data["pinned_channels"] = {}
+            changed = True
+
         for user_id, user in data["users"].items():
             if "available_balance" not in user:
                 user["available_balance"] = 0
@@ -94,6 +119,36 @@ class DataStore:
 
             if "debt" in user:
                 user.pop("debt")
+                changed = True
+
+        for schedule in data.get("scheduled_content", {}).values():
+            if "team_assignments" not in schedule:
+                schedule["team_assignments"] = {}
+                changed = True
+
+        for channel_state in data.get("pinned_channels", {}).values():
+            if "managed_message_ids" not in channel_state:
+                legacy_message_id = channel_state.pop("managed_message_id", None)
+                channel_state["managed_message_ids"] = [legacy_message_id] if legacy_message_id else []
+                changed = True
+            if "templates" not in channel_state:
+                channel_state.pop("latest_source_message_id", None)
+                channel_state["templates"] = []
+                changed = True
+            else:
+                normalized_templates = []
+                template_changed = False
+                for template in channel_state["templates"]:
+                    if isinstance(template, str):
+                        normalized_templates.append({"content": template, "created_by": "Unknown"})
+                        template_changed = True
+                    else:
+                        normalized_templates.append(template)
+                if template_changed:
+                    channel_state["templates"] = normalized_templates
+                    changed = True
+            if "debounce_seconds" not in channel_state:
+                channel_state["debounce_seconds"] = 5.0
                 changed = True
 
         if changed:
@@ -174,3 +229,40 @@ class DataStore:
 
     def set_content_role_caps(self, content_type: str, caps: dict[str, int | None]) -> None:
         self._data["content_role_caps"][content_type] = caps
+
+    def get_content_role_ids(self) -> dict[str, Any]:
+        return self._data["content_role_ids"]
+
+    def set_content_role_ids(self, content_type: str, role_ids: list[str]) -> None:
+        self._data["content_role_ids"][content_type] = role_ids
+
+    def get_content_channel_id(self) -> str | None:
+        return self._data["content_channel_id"]
+
+    def set_content_channel_id(self, channel_id: str) -> None:
+        self._data["content_channel_id"] = channel_id
+
+    def get_admin_role_ids(self) -> list[str]:
+        return self._data.get("admin_role_ids") or DEFAULT_ADMIN_ROLE_IDS
+
+    def set_admin_role_ids(self, role_ids: list[str]) -> None:
+        self._data["admin_role_ids"] = role_ids
+
+    def get_pinned_channels(self) -> dict[str, Any]:
+        return self._data["pinned_channels"]
+
+    def set_pinned_channel(self, channel_id: str) -> None:
+        if channel_id not in self._data["pinned_channels"]:
+            self._data["pinned_channels"][channel_id] = {
+                "managed_message_ids": [],
+                "templates": [],
+                "debounce_seconds": 5.0,
+            }
+
+    def update_pinned_channel(self, channel_id: str, **updates: Any) -> None:
+        if channel_id not in self._data["pinned_channels"]:
+            self.set_pinned_channel(channel_id)
+        self._data["pinned_channels"][channel_id].update(updates)
+
+    def remove_pinned_channel(self, channel_id: str) -> None:
+        self._data["pinned_channels"].pop(channel_id, None)

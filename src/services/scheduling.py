@@ -19,6 +19,7 @@ class SchedulingService:
         self.store = store
         self._tasks: dict[str, asyncio.Task] = {}
         self._team_update_tasks: dict[str, asyncio.Task] = {}
+        self._schedule_locks: dict[str, asyncio.Lock] = {}
 
     def get_content_choices(self) -> list[discord.OptionChoice]:
         return [
@@ -27,10 +28,10 @@ class SchedulingService:
         ]
 
     def resolve_roles(self, guild: discord.Guild, content_type: str) -> list[discord.Role]:
-        config = CONTENT_TYPES[content_type]
+        configured_role_ids = self.store.get_content_role_ids().get(content_type, [])
         roles = []
-        for role_name in config["role_names"]:
-            role = discord.utils.get(guild.roles, name=role_name)
+        for role_id in configured_role_ids:
+            role = guild.get_role(int(role_id))
             if role:
                 roles.append(role)
         return roles
@@ -42,6 +43,14 @@ class SchedulingService:
             "dps": stored_caps.get("dps"),
             "healer": stored_caps.get("healer"),
         }
+
+    def get_content_channel_id(self) -> str | None:
+        return self.store.get_content_channel_id()
+
+    def _get_schedule_lock(self, schedule_id: str) -> asyncio.Lock:
+        if schedule_id not in self._schedule_locks:
+            self._schedule_locks[schedule_id] = asyncio.Lock()
+        return self._schedule_locks[schedule_id]
 
     def find_schedule_by_announcement_message(self, message_id: int | str) -> dict[str, Any] | None:
         message_key = str(message_id)
@@ -61,22 +70,32 @@ class SchedulingService:
         return await channel.fetch_message(int(schedule["announcement_message_id"]))
 
     async def _build_team_map(self, schedule: dict[str, Any]) -> dict[str, list[str]]:
-        message = await self._get_signup_message(schedule)
         team_map = {role: [] for role in GEAR_REACTIONS}
+        assignments = schedule.get("team_assignments", {})
+
+        for user_id, role_name in assignments.items():
+            if role_name in team_map:
+                team_map[role_name].append(f"<@{user_id}>")
+
+        return team_map
+
+    async def rebuild_team_assignments(self, schedule: dict[str, Any]) -> None:
+        message = await self._get_signup_message(schedule)
         emoji_to_role = {emoji: role for role, emoji in GEAR_REACTIONS.items()}
+        rebuilt_assignments: dict[str, str] = {}
 
         for reaction in message.reactions:
             role_name = emoji_to_role.get(str(reaction.emoji))
-            if not role_name:
+            if role_name is None:
                 continue
-            users = []
+
             async for user in reaction.users():
                 if user.bot:
                     continue
-                users.append(f"<@{user.id}>")
-            team_map[role_name] = users
+                rebuilt_assignments[str(user.id)] = role_name
 
-        return team_map
+        self.store.update_schedule(schedule["schedule_id"], team_assignments=rebuilt_assignments)
+        self.store.save()
 
     async def _notify_cap_reached(self, schedule: dict[str, Any], user_id: int, role_name: str, cap_value: int) -> None:
         user = self.bot.get_user(user_id) or await self.bot.fetch_user(user_id)
@@ -90,9 +109,12 @@ class SchedulingService:
 
         channel = await self._get_channel(int(schedule["channel_id"]))
         fallback_message = await channel.send(f"<@{user_id}> {message_text}")
-        await asyncio.sleep(8)
+        asyncio.create_task(self._delete_message_later(fallback_message, delay_seconds=8))
+
+    async def _delete_message_later(self, message: discord.Message, delay_seconds: float) -> None:
+        await asyncio.sleep(delay_seconds)
         try:
-            await fallback_message.delete()
+            await message.delete()
         except discord.NotFound:
             pass
 
@@ -102,12 +124,12 @@ class SchedulingService:
         if cap_value is None:
             return False
 
-        team_map = await self._build_team_map(schedule)
-        member_mentions = team_map[role_name]
-        user_mention = f"<@{user_id}>"
-        if user_mention in member_mentions:
+        assignments = schedule.get("team_assignments", {})
+        if assignments.get(str(user_id)) == role_name:
             return False
-        return len(member_mentions) >= cap_value
+
+        current_count = sum(1 for assigned_role in assignments.values() if assigned_role == role_name)
+        return current_count >= cap_value
 
     async def create_or_update_team_embed(self, schedule: dict[str, Any]) -> None:
         starts_at = from_iso8601(schedule["scheduled_for"])
@@ -134,30 +156,51 @@ class SchedulingService:
         if not schedule:
             return
 
-        emoji_name = str(payload.emoji)
-        emoji_to_role = {emoji: role for role, emoji in GEAR_REACTIONS.items()}
-        role_name = emoji_to_role.get(emoji_name)
-        if role_name is None:
-            return
+        async with self._get_schedule_lock(schedule["schedule_id"]):
+            emoji_name = str(payload.emoji)
+            emoji_to_role = {emoji: role for role, emoji in GEAR_REACTIONS.items()}
+            role_name = emoji_to_role.get(emoji_name)
+            if role_name is None:
+                return
 
-        message = await self._get_signup_message(schedule)
-        if remove_other_roles and await self._role_is_full(schedule, role_name, payload.user_id):
-            await message.remove_reaction(emoji_name, discord.Object(id=payload.user_id))
-            cap_value = schedule.get("role_caps", {}).get(role_name)
-            if cap_value is not None:
-                await self._notify_cap_reached(schedule, payload.user_id, role_name, cap_value)
-            self.queue_team_update(schedule["schedule_id"])
-            return
+            message = await self._get_signup_message(schedule)
+            assignments = dict(schedule.get("team_assignments", {}))
+            user_key = str(payload.user_id)
 
-        if remove_other_roles:
-            for other_emoji in GEAR_REACTIONS.values():
-                if other_emoji == emoji_name:
-                    continue
-                await message.remove_reaction(other_emoji, discord.Object(id=payload.user_id))
+            if remove_other_roles:
+                if await self._role_is_full(schedule, role_name, payload.user_id):
+                    try:
+                        await message.remove_reaction(emoji_name, discord.Object(id=payload.user_id))
+                    except discord.Forbidden:
+                        return
 
-        self.queue_team_update(schedule["schedule_id"])
+                    cap_value = schedule.get("role_caps", {}).get(role_name)
+                    if cap_value is not None:
+                        await self._notify_cap_reached(schedule, payload.user_id, role_name, cap_value)
+                    return
 
-    def queue_team_update(self, schedule_id: str, delay_seconds: float = 0.75) -> None:
+                previous_role = assignments.get(user_key)
+                if previous_role and previous_role != role_name:
+                    previous_emoji = GEAR_REACTIONS[previous_role]
+                    try:
+                        await message.remove_reaction(previous_emoji, discord.Object(id=payload.user_id))
+                    except discord.Forbidden:
+                        pass
+
+                assignments[user_key] = role_name
+            else:
+                if assignments.get(user_key) == role_name:
+                    assignments.pop(user_key, None)
+                else:
+                    return
+
+            self.store.update_schedule(schedule["schedule_id"], team_assignments=assignments)
+            self.store.save()
+            schedule["team_assignments"] = assignments
+
+        self.queue_team_update(schedule["schedule_id"], delay_seconds=0.2)
+
+    def queue_team_update(self, schedule_id: str, delay_seconds: float = 0.2) -> None:
         existing_task = self._team_update_tasks.get(schedule_id)
         if existing_task and not existing_task.done():
             return
@@ -183,10 +226,15 @@ class SchedulingService:
         gearsets: str | None,
     ) -> tuple[dict[str, Any], discord.Message]:
         starts_at = utcnow() + timedelta(minutes=minutes_from_now)
+        content_channel_id = self.get_content_channel_id()
+        if not content_channel_id:
+            raise ValueError("No content channel configured. Use `/set_content_channel` first.")
+
+        content_channel = await self._get_channel(int(content_channel_id))
         roles = self.resolve_roles(ctx.guild, content_type)
         if not roles:
             raise ValueError(
-                f"No roles configured for `{CONTENT_TYPES[content_type]['label']}`. Update role names in src/config.py."
+                f"No roles configured for `{CONTENT_TYPES[content_type]['label']}`. Use `/set_content_role` first."
             )
 
         role_mentions = " ".join(role.mention for role in roles)
@@ -199,8 +247,8 @@ class SchedulingService:
             gearsets=gearsets,
             role_caps=role_caps,
         )
-        message = await ctx.respond(embed=embed)
-        original_message = await ctx.interaction.original_response()
+        await ctx.defer(ephemeral=True)
+        original_message = await content_channel.send(embed=embed)
 
         for emoji in GEAR_REACTIONS.values():
             await original_message.add_reaction(emoji)
@@ -212,12 +260,13 @@ class SchedulingService:
             "scheduled_for": to_iso8601(starts_at),
             "gearsets": gearsets,
             "guild_id": str(ctx.guild.id),
-            "channel_id": str(ctx.channel.id),
+            "channel_id": str(content_channel.id),
             "role_ids": [str(role.id) for role in roles],
             "created_by": str(ctx.author.id),
             "announcement_message_id": str(original_message.id),
             "current_team_message_id": None,
             "role_caps": role_caps,
+            "team_assignments": {},
             "started": False,
         }
         self.store.add_schedule(schedule_id, schedule)
@@ -230,6 +279,7 @@ class SchedulingService:
         for schedule_id, schedule in self.store.get_scheduled_content().items():
             if schedule.get("started"):
                 continue
+            await self.rebuild_team_assignments(schedule)
             await self.create_or_update_team_embed(schedule)
             if schedule_id in self._tasks and not self._tasks[schedule_id].done():
                 continue

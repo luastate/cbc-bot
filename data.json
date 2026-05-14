@@ -3,7 +3,7 @@
     "427565058982412290": {
       "username": "midnightcorners",
       "currency": "silver",
-      "available_balance": 5547833,
+      "available_balance": 7114083,
       "debts_owed": {
         "1134606847769321643": {
           "amount": 3500000,
@@ -14,7 +14,7 @@
           "reason": "gay porn"
         }
       },
-      "last_updated": "2026-05-07T22:22:33.448140+00:00",
+      "last_updated": "2026-05-08T05:14:38.477217+00:00",
       "transactions": [
         {
           "transaction_id": "tx_001",
@@ -66,6 +66,44 @@
           "sale_tax": 404000,
           "available_balance_after": 5547833,
           "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_006",
+          "type": "split_credit",
+          "amount": 1566250,
+          "reason": "Finished split 86c32d2e31",
+          "timestamp": "2026-05-08T05:00:02.551100+00:00",
+          "split_id": "86c32d2e31",
+          "gross_value": 7000000,
+          "setup_fee": 175000,
+          "sale_tax_rate": 0.08,
+          "sale_tax": 560000,
+          "available_balance_after": 7114083,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_007",
+          "type": "split_credit",
+          "amount": 292549820958,
+          "reason": "Finished split 3899c1779c",
+          "timestamp": "2026-05-08T05:11:51.483938+00:00",
+          "split_id": "3899c1779c",
+          "gross_value": 1251550036185,
+          "setup_fee": 31288750905,
+          "sale_tax_rate": 0.04,
+          "sale_tax": 50062001448,
+          "available_balance_after": 292556935041,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_008",
+          "type": "split_reversal",
+          "amount": 292549820958,
+          "reason": "Undo split 3899c1779c",
+          "timestamp": "2026-05-08T05:12:27.621761+00:00",
+          "split_id": "3899c1779c",
+          "available_balance_after": 7114083,
+          "performed_by": "427565058982412290"
         }
       ]
     },
@@ -109,14 +147,14 @@
     "1495904556671041707": {
       "username": "Calm Before Chaos Bot",
       "currency": "silver",
-      "available_balance": 3147833,
+      "available_balance": 4714083,
       "debts_owed": {
         "427565058982412290": {
           "amount": 1400000,
           "reason": "not gay porn"
         }
       },
-      "last_updated": "2026-05-07T22:22:23.511483+00:00",
+      "last_updated": "2026-05-08T05:12:27.621750+00:00",
       "transactions": [
         {
           "transaction_id": "tx_001",
@@ -141,6 +179,165 @@
           "sale_tax": 404000,
           "available_balance_after": 3147833,
           "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_003",
+          "type": "split_credit",
+          "amount": 1566250,
+          "reason": "Finished split 86c32d2e31",
+          "timestamp": "2026-05-08T05:00:02.551075+00:00",
+          "split_id": "86c32d2e31",
+          "gross_value": 7000000,
+          "setup_fee": 175000,
+          "sale_tax_rate": 0.08,
+          "sale_tax": 560000,
+          "available_balance_after": 4714083,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_004",
+          "type": "split_credit",
+          "amount": 292549820958,
+          "reason": "Finished split 3899c1779c",
+          "timestamp": "2026-05-08T05:11:51.483931+00:00",
+          "split_id": "3899c1779c",
+          "gross_value": 1251550036185,
+          "setup_fee": 31288750905,
+          "sale_tax_rate": 0.04,
+          "sale_tax": 50062001448,
+          "available_balance_after": 292554535041,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_005",
+          "type": "split_reversal",
+          "amount": 292549820958,
+          "reason": "Undo split 3899c1779c",
+          "timestamp": "2026-05-08T05:12:27.621750+00:00",
+          "split_id": "3899c1779c",
+          "available_balance_after": 4714083,
+          "performed_by": "427565058982412290"
+        }
+      ]
+    },
+    "500082546491523092": {
+      "username": "flurpa",
+      "currency": "silver",
+      "available_balance": 1677361,
+      "debts_owed": {},
+      "last_updated": "2026-05-08T05:12:27.621737+00:00",
+      "transactions": [
+        {
+          "transaction_id": "tx_001",
+          "type": "balance_credit",
+          "amount": 1111111,
+          "reason": "esfasef",
+          "timestamp": "2026-05-08T03:17:31.797090+00:00",
+          "available_balance_after": 1111111,
+          "performed_by": "528487113700802560"
+        },
+        {
+          "transaction_id": "tx_002",
+          "type": "split_credit",
+          "amount": 1566250,
+          "reason": "Finished split 86c32d2e31",
+          "timestamp": "2026-05-08T05:00:02.551052+00:00",
+          "split_id": "86c32d2e31",
+          "gross_value": 7000000,
+          "setup_fee": 175000,
+          "sale_tax_rate": 0.08,
+          "sale_tax": 560000,
+          "available_balance_after": 2677361,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_003",
+          "type": "balance_withdrawal",
+          "amount": 1000000,
+          "reason": "porn",
+          "timestamp": "2026-05-08T05:01:42.674299+00:00",
+          "available_balance_after": 1677361,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_004",
+          "type": "split_credit",
+          "amount": 292549820958,
+          "reason": "Finished split 3899c1779c",
+          "timestamp": "2026-05-08T05:11:51.483922+00:00",
+          "split_id": "3899c1779c",
+          "gross_value": 1251550036185,
+          "setup_fee": 31288750905,
+          "sale_tax_rate": 0.04,
+          "sale_tax": 50062001448,
+          "available_balance_after": 292551498319,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_005",
+          "type": "split_reversal",
+          "amount": 292549820958,
+          "reason": "Undo split 3899c1779c",
+          "timestamp": "2026-05-08T05:12:27.621737+00:00",
+          "split_id": "3899c1779c",
+          "available_balance_after": 1677361,
+          "performed_by": "427565058982412290"
+        }
+      ]
+    },
+    "528487113700802560": {
+      "username": "_st0ckholm_",
+      "currency": "silver",
+      "available_balance": 2314250,
+      "debts_owed": {},
+      "last_updated": "2026-05-08T05:12:27.621718+00:00",
+      "transactions": [
+        {
+          "transaction_id": "tx_001",
+          "type": "split_credit",
+          "amount": 1566250,
+          "reason": "Finished split 86c32d2e31",
+          "timestamp": "2026-05-08T05:00:02.551000+00:00",
+          "split_id": "86c32d2e31",
+          "gross_value": 7000000,
+          "setup_fee": 175000,
+          "sale_tax_rate": 0.08,
+          "sale_tax": 560000,
+          "available_balance_after": 1566250,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_002",
+          "type": "balance_credit",
+          "amount": 748000,
+          "reason": "split (left early)",
+          "timestamp": "2026-05-08T05:07:08.944621+00:00",
+          "available_balance_after": 2314250,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_003",
+          "type": "split_credit",
+          "amount": 292549820958,
+          "reason": "Finished split 3899c1779c",
+          "timestamp": "2026-05-08T05:11:51.483909+00:00",
+          "split_id": "3899c1779c",
+          "gross_value": 1251550036185,
+          "setup_fee": 31288750905,
+          "sale_tax_rate": 0.04,
+          "sale_tax": 50062001448,
+          "available_balance_after": 292552135208,
+          "performed_by": "427565058982412290"
+        },
+        {
+          "transaction_id": "tx_004",
+          "type": "split_reversal",
+          "amount": 292549820958,
+          "reason": "Undo split 3899c1779c",
+          "timestamp": "2026-05-08T05:12:27.621718+00:00",
+          "split_id": "3899c1779c",
+          "available_balance_after": 2314250,
+          "performed_by": "427565058982412290"
         }
       ]
     }
@@ -160,7 +357,8 @@
       "announcement_message_id": "1502057754377060412",
       "started": true,
       "current_team_message_id": "1502066031479226480",
-      "started_at": "2026-05-07T22:21:13.803849+00:00"
+      "started_at": "2026-05-07T22:21:13.803849+00:00",
+      "team_assignments": {}
     },
     "7e51f7f87e69430e82c51c3200008929": {
       "schedule_id": "7e51f7f87e69430e82c51c3200008929",
@@ -176,7 +374,8 @@
       "announcement_message_id": "1502059141642846339",
       "started": true,
       "current_team_message_id": "1502066051137933312",
-      "started_at": "2026-05-07T22:26:46.502972+00:00"
+      "started_at": "2026-05-07T22:26:46.502972+00:00",
+      "team_assignments": {}
     },
     "cedfc9166e674f7c8a0037e1d1fbd751": {
       "schedule_id": "cedfc9166e674f7c8a0037e1d1fbd751",
@@ -192,7 +391,8 @@
       "announcement_message_id": "1502059259544993912",
       "started": true,
       "current_team_message_id": "1502066054434783243",
-      "started_at": "2026-05-07T21:57:14.691758+00:00"
+      "started_at": "2026-05-07T21:57:14.691758+00:00",
+      "team_assignments": {}
     },
     "c89d25cebd4b4076b7c63977ac98479c": {
       "schedule_id": "c89d25cebd4b4076b7c63977ac98479c",
@@ -208,7 +408,8 @@
       "announcement_message_id": "1502066134332215428",
       "current_team_message_id": "1502066143798755508",
       "started": true,
-      "started_at": "2026-05-07T22:09:33.758211+00:00"
+      "started_at": "2026-05-07T22:09:33.758211+00:00",
+      "team_assignments": {}
     },
     "82a52b2c0f0b4176afb85c0094d9b91e": {
       "schedule_id": "82a52b2c0f0b4176afb85c0094d9b91e",
@@ -224,7 +425,8 @@
       "announcement_message_id": "1502066684561854578",
       "current_team_message_id": "1502066694632505385",
       "started": true,
-      "started_at": "2026-05-07T22:06:44.794576+00:00"
+      "started_at": "2026-05-07T22:06:44.794576+00:00",
+      "team_assignments": {}
     },
     "c48adcf749bf46979c7beefaac527962": {
       "schedule_id": "c48adcf749bf46979c7beefaac527962",
@@ -245,7 +447,8 @@
         "healer": 2
       },
       "started": true,
-      "started_at": "2026-05-07T22:27:36.232104+00:00"
+      "started_at": "2026-05-07T22:27:36.232104+00:00",
+      "team_assignments": {}
     },
     "e73ed15019404cdc882f639d71b50090": {
       "schedule_id": "e73ed15019404cdc882f639d71b50090",
@@ -266,7 +469,52 @@
         "healer": 2
       },
       "started": true,
-      "started_at": "2026-05-07T22:30:41.284863+00:00"
+      "started_at": "2026-05-07T22:30:41.284863+00:00",
+      "team_assignments": {}
+    },
+    "929b0307d6044b76ae943af0d5ff69b1": {
+      "schedule_id": "929b0307d6044b76ae943af0d5ff69b1",
+      "content_type": "roads",
+      "scheduled_for": "2026-05-08T03:27:34.705050+00:00",
+      "gearsets": "Rotcaller",
+      "guild_id": "1502122077933539400",
+      "channel_id": "1502126658029617412",
+      "role_ids": [
+        "1502123287495311441"
+      ],
+      "created_by": "427565058982412290",
+      "announcement_message_id": "1502147426969194666",
+      "current_team_message_id": "1502147434992631829",
+      "role_caps": {
+        "tank": 2,
+        "dps": null,
+        "healer": 2
+      },
+      "started": true,
+      "started_at": "2026-05-08T04:39:15.025342+00:00",
+      "team_assignments": {}
+    },
+    "7fdfe81ae99f40eaa9ef3e5da72c984f": {
+      "schedule_id": "7fdfe81ae99f40eaa9ef3e5da72c984f",
+      "content_type": "roads",
+      "scheduled_for": "2026-05-08T05:32:45.647227+00:00",
+      "gearsets": "Rotcaller",
+      "guild_id": "1502122077933539400",
+      "channel_id": "1502126658029617412",
+      "role_ids": [
+        "1502123287495311441"
+      ],
+      "created_by": "427565058982412290",
+      "announcement_message_id": "1502173897339174912",
+      "current_team_message_id": "1502173904414969876",
+      "role_caps": {
+        "tank": 0,
+        "dps": null,
+        "healer": 2
+      },
+      "started": true,
+      "started_at": "2026-05-08T05:32:46.051464+00:00",
+      "team_assignments": {}
     }
   },
   "splits": {
@@ -290,6 +538,72 @@
       "performed_by": "427565058982412290",
       "created_at": "2026-05-07T22:22:23.511370+00:00",
       "undone": false
+    },
+    "86c32d2e31": {
+      "split_id": "86c32d2e31",
+      "gear_value": 5800000,
+      "bags_value": 1200000,
+      "gross_value": 7000000,
+      "setup_fee": 175000,
+      "has_premium": false,
+      "sale_tax_rate": 0.08,
+      "sale_tax": 560000,
+      "net_value": 6265000,
+      "participant_count": 4,
+      "participant_ids": [
+        "528487113700802560",
+        "500082546491523092",
+        "1495904556671041707",
+        "427565058982412290"
+      ],
+      "split_amount": 1566250,
+      "remainder": 0,
+      "performed_by": "427565058982412290",
+      "created_at": "2026-05-08T05:00:02.550898+00:00",
+      "undone": false
+    },
+    "bedfee92b7": {
+      "split_id": "bedfee92b7",
+      "gear_value": 4000000,
+      "bags_value": 0,
+      "gross_value": 4000000,
+      "setup_fee": 100000,
+      "has_premium": true,
+      "sale_tax_rate": 0.04,
+      "sale_tax": 160000,
+      "net_value": 3740000,
+      "participant_count": 5,
+      "participant_ids": [],
+      "split_amount": 748000,
+      "remainder": 0,
+      "performed_by": "427565058982412290",
+      "created_at": "2026-05-08T05:06:13.767255+00:00",
+      "undone": false
+    },
+    "3899c1779c": {
+      "split_id": "3899c1779c",
+      "gear_value": 1238712837912,
+      "bags_value": 12837198273,
+      "gross_value": 1251550036185,
+      "setup_fee": 31288750905,
+      "has_premium": true,
+      "sale_tax_rate": 0.04,
+      "sale_tax": 50062001448,
+      "net_value": 1170199283832,
+      "participant_count": 4,
+      "participant_ids": [
+        "528487113700802560",
+        "500082546491523092",
+        "1495904556671041707",
+        "427565058982412290"
+      ],
+      "split_amount": 292549820958,
+      "remainder": 0,
+      "performed_by": "427565058982412290",
+      "created_at": "2026-05-08T05:11:51.483848+00:00",
+      "undone": true,
+      "undone_at": "2026-05-08T05:12:27.621771+00:00",
+      "undone_by": "427565058982412290"
     }
   },
   "content_role_caps": {
@@ -297,6 +611,51 @@
       "tank": 2,
       "dps": null,
       "healer": 2
+    },
+    "roads": {
+      "tank": 0,
+      "dps": null,
+      "healer": 2
+    },
+    "yz_faction": {
+      "tank": 2,
+      "dps": null,
+      "healer": 2
+    },
+    "rz_faction": {
+      "tank": 2,
+      "dps": null,
+      "healer": 2
+    }
+  },
+  "content_role_ids": {
+    "roads": [
+      "1502123287495311441"
+    ],
+    "bz_roam": [
+      "1502123304302149843"
+    ],
+    "yz_faction": [
+      "1502123329874563083"
+    ],
+    "rz_faction": [
+      "1502123358446161941"
+    ]
+  },
+  "content_channel_id": "1502126658029617412",
+  "admin_role_id": "1502122138457346228",
+  "pinned_channels": {
+    "1504020610379157576": {
+      "managed_message_ids": [
+        "1504574429709991977"
+      ],
+      "templates": [
+        {
+          "content": "Hideout today <t:1778803200:R>",
+          "created_by": "midnightcorners"
+        }
+      ],
+      "debounce_seconds": 5.0
     }
   }
 }

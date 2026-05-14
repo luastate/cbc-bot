@@ -100,6 +100,12 @@ def split_history_embed(lines: list[str]) -> discord.Embed:
     )
 
 
+def pinned_message_embed(content: str, pinned_by: str) -> discord.Embed:
+    embed = discord.Embed(description=content, color=INFO_COLOR)
+    embed.set_footer(text=f"Pinned by {pinned_by}")
+    return embed
+
+
 def scheduled_content_embed(
     title: str,
     content_label: str,

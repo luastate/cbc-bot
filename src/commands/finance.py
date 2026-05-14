@@ -2,8 +2,8 @@ import re
 
 import discord
 
+from src.auth import is_admin
 from src.config import (
-    ADMIN_ROLE_NAMES,
     ALBION_MARKET_SALE_NONPREMIUM_TAX_RATE,
     ALBION_MARKET_SALE_PREMIUM_TAX_RATE,
     ALBION_MARKET_SETUP_FEE_RATE,
@@ -17,10 +17,6 @@ from src.embeds import balance_embed, debt_summary_embed, error_embed, split_his
 from src.services.finance import FinanceService
 from src.storage import DataStore
 from src.utils import format_amount
-
-
-def is_admin(member: discord.Member) -> bool:
-    return any(role.name in ADMIN_ROLE_NAMES for role in member.roles)
 
 
 def transaction_line(entry: dict, currency: str) -> str:
@@ -54,6 +50,16 @@ def parse_member_mentions(raw_value: str, guild: discord.Guild) -> list[discord.
         if member:
             members.append(member)
     return members
+
+
+def parse_split_users(raw_value: str, guild: discord.Guild) -> tuple[list[discord.Member], int]:
+    normalized = raw_value.strip()
+    if normalized.isdigit():
+        participant_count = int(normalized)
+        return [], participant_count
+
+    members = parse_member_mentions(normalized, guild)
+    return members, len(members)
 
 
 def split_history_line(split: dict, guild: discord.Guild) -> str:
@@ -104,7 +110,7 @@ def register_finance_commands(bot: discord.Bot, store: DataStore) -> None:
         limit: int = TRANSACTION_HISTORY_DEFAULT_LIMIT,
     ):
         target = member or ctx.author
-        ephemeral = target != ctx.author and not is_admin(ctx.author)
+        ephemeral = target != ctx.author and not is_admin(ctx.author, store)
         await ctx.defer(ephemeral=ephemeral)
         safe_limit = max(1, min(limit, MAX_TRANSACTION_HISTORY_LIMIT))
         currency, entries = finance_service.get_transactions(target.id, safe_limit)
@@ -116,7 +122,7 @@ def register_finance_commands(bot: discord.Bot, store: DataStore) -> None:
 
     @bot.slash_command(name="add_balance", description="Admin: add withdrawable balance.")
     async def add_balance(ctx: discord.ApplicationContext, member: discord.Member, amount: int, reason: str):
-        if not is_admin(ctx.author):
+        if not is_admin(ctx.author, store):
             await ctx.respond(embed=error_embed("Admin Only", "Only admins can add balance."), ephemeral=True)
             return
         if amount <= 0:
@@ -133,7 +139,7 @@ def register_finance_commands(bot: discord.Bot, store: DataStore) -> None:
 
     @bot.slash_command(name="withdraw_balance", description="Admin: pull from available balance for in-game withdrawal.")
     async def withdraw_balance(ctx: discord.ApplicationContext, member: discord.Member, amount: int, reason: str):
-        if not is_admin(ctx.author):
+        if not is_admin(ctx.author, store):
             await ctx.respond(embed=error_embed("Admin Only", "Only admins can withdraw balance."), ephemeral=True)
             return
         if amount <= 0:
@@ -161,7 +167,7 @@ def register_finance_commands(bot: discord.Bot, store: DataStore) -> None:
         amount: int,
         reason: str = "Debt",
     ):
-        if not is_admin(ctx.author):
+        if not is_admin(ctx.author, store):
             await ctx.respond(embed=error_embed("Admin Only", "Only admins can add debt."), ephemeral=True)
             return
         if amount <= 0:
@@ -178,7 +184,7 @@ def register_finance_commands(bot: discord.Bot, store: DataStore) -> None:
 
     @bot.slash_command(name="clear_debt", description="Admin: clear debt between two members.")
     async def clear_debt(ctx: discord.ApplicationContext, debtor: discord.Member, creditor: discord.Member):
-        if not is_admin(ctx.author):
+        if not is_admin(ctx.author, store):
             await ctx.respond(embed=error_embed("Admin Only", "Only admins can clear debt."), ephemeral=True)
             return
 
@@ -203,33 +209,41 @@ def register_finance_commands(bot: discord.Bot, store: DataStore) -> None:
         has_premium: bool,
         users: str,
     ):
-        if not is_admin(ctx.author):
+        if not is_admin(ctx.author, store):
             await ctx.respond(embed=error_embed("Admin Only", "Only admins can finish splits."), ephemeral=True)
             return
 
-        members = parse_member_mentions(users, ctx.guild)
-        if not members:
+        members, participant_count = parse_split_users(users, ctx.guild)
+        if participant_count <= 0:
             await ctx.respond(
-                embed=error_embed("No Users Found", "Mention at least one valid server member in `users`."),
+                embed=error_embed("Invalid Users", "Use user mentions or a player count like `5`."),
                 ephemeral=True,
             )
             return
 
         await ctx.defer()
         try:
-            split = finance_service.finish_split(members, gear_value, bags_value, has_premium, ctx.author.id)
+            split = finance_service.finish_split(
+                members,
+                participant_count,
+                gear_value,
+                bags_value,
+                has_premium,
+                ctx.author.id,
+            )
         except ValueError as exc:
             await ctx.followup.send(embed=error_embed("Split Failed", str(exc)), ephemeral=True)
             return
 
-        participant_lines = [
-            f"{member.mention} • {format_amount(split['split_amount'], DEFAULT_CURRENCY)}"
-            for member in members
-        ]
-        mention_string = " ".join(member.mention for member in members)
+        participant_lines = (
+            [f"{member.mention} • {format_amount(split['split_amount'], DEFAULT_CURRENCY)}" for member in members]
+            if members
+            else [f"Player Count • {participant_count}", f"Balance Credit • Not applied"]
+        )
+        mention_string = " ".join(member.mention for member in members) if members else ""
         sale_tax_rate = ALBION_MARKET_SALE_PREMIUM_TAX_RATE if has_premium else ALBION_MARKET_SALE_NONPREMIUM_TAX_RATE
         description = (
-            f"{mention_string}\n\n"
+            f"{mention_string + chr(10)*2 if mention_string else ''}"
             f"**Gear Value:** {format_amount(gear_value, DEFAULT_CURRENCY)}\n"
             f"**Bags Value:** {format_amount(bags_value, DEFAULT_CURRENCY)}\n"
             f"**Premium:** {'Yes' if has_premium else 'No'}\n"
@@ -237,18 +251,20 @@ def register_finance_commands(bot: discord.Bot, store: DataStore) -> None:
             f"**Setup Fee ({ALBION_MARKET_SETUP_FEE_RATE * 100:.1f}%):** {format_amount(split['setup_fee'], DEFAULT_CURRENCY)}\n"
             f"**Sale Tax ({sale_tax_rate * 100:.1f}%):** {format_amount(split['sale_tax'], DEFAULT_CURRENCY)}\n"
             f"**Net Split Pool:** {format_amount(split['net_value'], DEFAULT_CURRENCY)}\n"
+            f"**Player Count:** {participant_count}\n"
             f"**Per Person:** {format_amount(split['split_amount'], DEFAULT_CURRENCY)}\n"
             f"**Remainder:** {format_amount(split['remainder'], DEFAULT_CURRENCY)}\n"
+            f"**Balances Credited:** {'Yes' if members else 'No'}\n"
             f"**Split ID:** `{split['split_id']}`"
         )
         await ctx.followup.send(
-            content=mention_string,
+            content=mention_string or None,
             embed=split_result_embed("Split Finished", description, participant_lines),
         )
 
     @bot.slash_command(name="undo_split", description="Admin: reverse a previous finish_split by split ID.")
     async def undo_split(ctx: discord.ApplicationContext, split_id: str):
-        if not is_admin(ctx.author):
+        if not is_admin(ctx.author, store):
             await ctx.respond(embed=error_embed("Admin Only", "Only admins can undo splits."), ephemeral=True)
             return
 

@@ -163,6 +163,7 @@ class FinanceService:
     def finish_split(
         self,
         members: list[Any],
+        participant_count: int,
         gear_value: int,
         bags_value: int,
         has_premium: bool,
@@ -170,8 +171,8 @@ class FinanceService:
     ) -> dict[str, Any]:
         if gear_value < 0 or bags_value < 0:
             raise ValueError("Gear and bags values must be 0 or greater.")
-        if not members:
-            raise ValueError("At least one member must be specified.")
+        if participant_count <= 0:
+            raise ValueError("Participant count must be greater than 0.")
 
         gross_value = gear_value + bags_value
         setup_fee = math.ceil(gross_value * ALBION_MARKET_SETUP_FEE_RATE)
@@ -181,8 +182,8 @@ class FinanceService:
         if net_value < 0:
             raise ValueError("Net split cannot be negative.")
 
-        split_amount = net_value // len(members)
-        remainder = net_value - (split_amount * len(members))
+        split_amount = net_value // participant_count
+        remainder = net_value - (split_amount * participant_count)
         split_id = uuid4().hex[:10]
         created_at = to_iso8601(utcnow())
         participant_ids = [str(member.id) for member in members]
@@ -214,6 +215,7 @@ class FinanceService:
             "sale_tax_rate": sale_tax_rate,
             "sale_tax": sale_tax,
             "net_value": net_value,
+            "participant_count": participant_count,
             "participant_ids": participant_ids,
             "split_amount": split_amount,
             "remainder": remainder,
