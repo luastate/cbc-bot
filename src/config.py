@@ -1,8 +1,9 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 DATA_FILE = os.getenv("CBC_BOT_DATA_FILE", "data.json")
 DEFAULT_CURRENCY = os.getenv("CBC_BOT_CURRENCY", "silver")
-# Supports comma-separated role IDs for multiple admin roles
 DEFAULT_ADMIN_ROLE_IDS = os.getenv("CBC_BOT_ADMIN_ROLE_ID").split(",")
 TRANSACTION_HISTORY_DEFAULT_LIMIT = 10
 MAX_TRANSACTION_HISTORY_LIMIT = 20

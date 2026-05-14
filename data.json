@@ -643,7 +643,6 @@
     ]
   },
   "content_channel_id": "1502126658029617412",
-  "admin_role_id": "1502122138457346228",
   "pinned_channels": {
     "1504020610379157576": {
       "managed_message_ids": [
@@ -657,5 +656,8 @@
       ],
       "debounce_seconds": 5.0
     }
-  }
+  },
+  "admin_role_ids": [
+    "1502122138457346228"
+  ]
 }

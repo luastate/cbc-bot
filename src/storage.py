@@ -70,7 +70,6 @@ class DataStore:
             data["content_channel_id"] = None
             changed = True
 
-        # Migrate from single admin_role_id to admin_role_ids list
         if "admin_role_id" in data and "admin_role_ids" not in data:
             old_role_id = data.pop("admin_role_id")
             data["admin_role_ids"] = [old_role_id] if old_role_id else DEFAULT_ADMIN_ROLE_IDS
