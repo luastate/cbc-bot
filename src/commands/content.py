@@ -115,11 +115,12 @@ def register_content_commands(
         ctx: discord.ApplicationContext,
         role: discord.Role,
     ):
-        if not is_admin(ctx.author, store):
-            await ctx.respond(embed=error_embed("Admin Only", "Only current bot admins can set admin role."), ephemeral=True)
+        if not ctx.author.guild_permissions.administrator and not is_admin(ctx.author, store):
+            await ctx.respond(embed=error_embed("Admin Only", "Only server administrators or current bot admins can set admin role."), ephemeral=True)
             return
 
-        store.set_admin_role_id(str(role.id))
+        guild_id = str(ctx.guild.id)
+        store.set_admin_role_id_for_guild(guild_id, str(role.id))
         store.save()
         await ctx.respond(
             embed=success_embed(

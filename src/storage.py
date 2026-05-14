@@ -22,7 +22,7 @@ class DataStore:
             "content_role_caps": {},
             "content_role_ids": {},
             "content_channel_id": None,
-            "admin_role_ids": DEFAULT_ADMIN_ROLE_IDS,
+            "admin_roles_by_guild": {},
             "pinned_channels": {},
         }
 
@@ -70,12 +70,18 @@ class DataStore:
             data["content_channel_id"] = None
             changed = True
 
-        if "admin_role_id" in data and "admin_role_ids" not in data:
-            old_role_id = data.pop("admin_role_id")
-            data["admin_role_ids"] = [old_role_id] if old_role_id else DEFAULT_ADMIN_ROLE_IDS
+        if "admin_role_id" in data:
+            data.pop("admin_role_id")
             changed = True
-        elif "admin_role_ids" not in data:
-            data["admin_role_ids"] = DEFAULT_ADMIN_ROLE_IDS
+
+        if "admin_role_ids" in data:
+            old_admin_role_ids = data.pop("admin_role_ids")
+            if old_admin_role_ids and old_admin_role_ids != DEFAULT_ADMIN_ROLE_IDS:
+                data["admin_roles_by_guild"] = {"migration": old_admin_role_ids}
+            changed = True
+
+        if "admin_roles_by_guild" not in data:
+            data["admin_roles_by_guild"] = {}
             changed = True
 
         if "pinned_channels" not in data:
@@ -241,11 +247,13 @@ class DataStore:
     def set_content_channel_id(self, channel_id: str) -> None:
         self._data["content_channel_id"] = channel_id
 
-    def get_admin_role_ids(self) -> list[str]:
-        return self._data.get("admin_role_ids") or DEFAULT_ADMIN_ROLE_IDS
+    def get_admin_role_ids_for_guild(self, guild_id: str) -> list[str]:
+        return self._data.get("admin_roles_by_guild", {}).get(guild_id, [])
 
-    def set_admin_role_ids(self, role_ids: list[str]) -> None:
-        self._data["admin_role_ids"] = role_ids
+    def set_admin_role_id_for_guild(self, guild_id: str, role_id: str) -> None:
+        if "admin_roles_by_guild" not in self._data:
+            self._data["admin_roles_by_guild"] = {}
+        self._data["admin_roles_by_guild"][guild_id] = [role_id]
 
     def get_pinned_channels(self) -> dict[str, Any]:
         return self._data["pinned_channels"]
